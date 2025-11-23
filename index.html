@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>KosFinance</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <div class="modal" id="tutorialModal">
+      <div class="modal-c">
+        <div class="modal-h">Tutorial</div>
+        <div class="step">
+          <div class="step-n">1</div>
+          <div class="step-t">Tracker Pengeluaran</div>
+          <div class="step-d">
+            Pilih kategori → Input jumlah → Add. Data otomatis tersimpan!
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-n">2</div>
+          <div class="step-t">Budget Mingguan</div>
+          <div class="step-d">
+            Set budget → Progress berubah: 🟢Hemat, 🟡Sedang, 🔴Boros
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-n">3</div>
+          <div class="step-t">Savings Goal</div>
+          <div class="step-d">Set target → Lihat progress circular</div>
+        </div>
+        <div class="step">
+          <div class="step-n">4</div>
+          <div class="step-t">Mode Hemat</div>
+          <div class="step-d">
+            Aktifkan untuk tips menghemat dengan tema hijau
+          </div>
+        </div>
+        <div class="m-btns">
+          <button class="m-btn m-btn-s" onclick="closeTutorial()">Lewati</button
+          ><button class="m-btn m-btn-p" onclick="startApp()">Mulai! 🚀</button>
+        </div>
+      </div>
+    </div>
+
+    <header>
+      <h1>💰 Ngekos</h1>
+      <nav>
+        <button class="btn" onclick="toggleHemat()">Mode Hemat</button>
+      </nav>
+    </header>
+
+    <div class="container">
+      <div class="section">
+        <h2>Tracker Pengeluaran</h2>
+        <div class="cat-grid">
+          <button class="cat-btn" onclick="selectCat('Makan','🍔')">
+            🍔<span>Makan</span>
+          </button>
+          <button class="cat-btn" onclick="selectCat('Laundry','👕')">
+            👕<span>Laundry</span>
+          </button>
+          <button class="cat-btn" onclick="selectCat('Pulsa','📱')">
+            📱<span>Pulsa</span>
+          </button>
+          <button class="cat-btn" onclick="selectCat('Ongkos','🚗')">
+            🚗<span>Ongkos</span>
+          </button>
+          <button class="cat-btn" onclick="selectCat('Tugas','📚')">
+            📚<span>Tugas</span>
+          </button>
+          <button class="cat-btn" onclick="selectCat('Print','🖨️')">
+            🖨️<span>Print</span>
+          </button>
+          <button class="cat-btn" onclick="selectCat('Jajan','🍿')">
+            🍿<span>Jajan</span>
+          </button>
+          <button class="cat-btn" onclick="selectCat('Darurat','🆘')">
+            🆘<span>Darurat</span>
+          </button>
+        </div>
+        <div class="input-g">
+          <input
+            type="number"
+            id="amountInput"
+            placeholder="Jumlah (Rp)"
+            min="0"
+          /><button class="btn" onclick="addExpense()">Add</button>
+        </div>
+        <div class="list" id="expensesList"></div>
+        <div class="stats">
+          <div class="stat-card">
+            <div class="stat-val" id="todayTotal">Rp 0</div>
+            <div class="stat-label">Hari Ini</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-val" id="weekTotal">Rp 0</div>
+            <div class="stat-label">Minggu</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-val" id="monthTotal">Rp 0</div>
+            <div class="stat-label">Bulan</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>Budget & Savings</h2>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 25px">
+          <div>
+            <h3
+              style="
+                font-size: 14px;
+                color: #999;
+                margin-bottom: 10px;
+                text-transform: uppercase;
+              "
+            >
+              Budget Mingguan
+            </h3>
+            <div
+              style="font-size: 24px; font-weight: 700; margin-bottom: 12px"
+              id="budgetAmount"
+            >
+              Rp 420.000
+            </div>
+            <div class="progress">
+              <div class="fill" id="progressFill" style="width: 0%">0%</div>
+            </div>
+            <div class="input-g" style="margin-top: 12px">
+              <input
+                type="number"
+                id="budgetInput"
+                placeholder="Set Budget (Rp)"
+                min="0"
+              /><button class="btn" onclick="setBudget()">Set</button>
+            </div>
+          </div>
+          <div>
+            <h3
+              style="
+                font-size: 14px;
+                color: #999;
+                margin-bottom: 10px;
+                text-transform: uppercase;
+              "
+            >
+              Target Hemat
+            </h3>
+            <div
+              class="circle"
+              style="width: 120px; height: 120px; margin: 0 auto"
+            >
+              <svg width="120" height="120">
+                <circle
+                  cx="60"
+                  cy="60"
+                  r="56"
+                  fill="none"
+                  stroke="#e0e0e0"
+                  stroke-width="6"
+                ></circle>
+                <circle
+                  id="progressCircle"
+                  cx="60"
+                  cy="60"
+                  r="56"
+                  fill="none"
+                  stroke="#2ED573"
+                  stroke-width="6"
+                  stroke-dasharray="352"
+                  stroke-dashoffset="352"
+                ></circle>
+              </svg>
+              <div class="circle-t">
+                <div class="pct" id="progressPct" style="font-size: 24px">
+                  25%
+                </div>
+                <div class="lbl" style="font-size: 11px">Sisa</div>
+              </div>
+            </div>
+            <div class="input-g" style="margin-top: 12px">
+              <input
+                type="number"
+                id="savingInput"
+                placeholder="Target (Rp)"
+                min="0"
+              /><button class="btn" onclick="setSavingGoal()">Set</button>
+            </div>
+          </div>
+        </div>
+        <div class="stats" style="margin-top: 20px">
+          <div class="stat-card">
+            <div class="stat-val" id="savedAmount">Rp 1.200.000</div>
+            <div class="stat-label">Sisa Sangu</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-val" id="targetAmount">Rp 1.200.000</div>
+            <div class="stat-label">Total Sangu</div>
+          </div>
+        </div>
+        <div class="tips" id="tips" style="display: none; margin-top: 15px">
+          <h3>💡 Tips Hemat!</h3>
+          <ul id="tipsList"></ul>
+        </div>
+      </div>
+
+      <div class="section full">
+        <h2>Statistik</h2>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px">
+          <div>
+            <h3 style="margin-bottom: 15px">Per Kategori</h3>
+            <div class="chart-c"><canvas id="categoryChart"></canvas></div>
+          </div>
+          <div>
+            <h3 style="margin-bottom: 15px">Trend 7 Hari</h3>
+            <div class="chart-c"><canvas id="trendChart"></canvas></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="js/app.js"></script>
+  </body>
+</html>
